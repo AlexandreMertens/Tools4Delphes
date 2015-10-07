@@ -2,7 +2,7 @@
 
 
 
-void eff_fitter(){
+void eff_fitter_CMS(){
 
 static const Int_t n = 14;
 Double_t cms_pt_val[n] = {35, 45, 55, 65, 75, 90, 110, 140, 185, 235, 290, 360, 450, 585};
