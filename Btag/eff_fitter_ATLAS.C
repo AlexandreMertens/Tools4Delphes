@@ -23,16 +23,25 @@ TCanvas *c1 = new TCanvas("c1","ATLAS efficiencies",200,10,700,500);
 atlas_effB_gr->SetMinimum(0);
 atlas_effB_gr->SetMaximum(1);
 
-atlas_effB_gr->Draw("AP*");
-atlas_effC_gr->Draw("P*");
-atlas_effL_gr->Draw("P*");
+
+atlas_effB_gr->SetMarkerStyle(8);
+atlas_effC_gr->SetMarkerStyle(8);
+atlas_effL_gr->SetMarkerStyle(8);
+
+atlas_effB_gr->SetMarkerColor(8);
+atlas_effC_gr->SetMarkerColor(4);
+atlas_effL_gr->SetMarkerColor(2);
+
+atlas_effB_gr->Draw("AP");
+atlas_effC_gr->Draw("P");
+atlas_effL_gr->Draw("P");
 
 atlas_effL_gr->Fit("pol1");
 
-TF1 *fB = new TF1("fB","0.3+0.5*TMath::TanH([0]*x)*(5/(1+[1]*x))",20,600);
+TF1 *fB = new TF1("fB","0.80*TMath::TanH([0]*x)*(30/(1+[1]*x))",20,600);
 atlas_effB_gr->Fit(fB);
 
-TF1 *fC = new TF1("fC","0.05+0.15*TMath::TanH([1]*x)*(1/(1+[2]*x))",20,600);
+TF1 *fC = new TF1("fC","0.20*TMath::TanH([0]*x)*(1/(1+[1]*x))",20,600);
 atlas_effC_gr->Fit(fC);
 }
 
