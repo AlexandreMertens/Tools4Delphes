@@ -84,7 +84,7 @@ vpionSmearing=vectorize(pionSmearing)
 def muonSmearing(pt,eta):
 
     if (abs(eta) <= 0.5) and (pt > 0.1) :
-        smear = np.sqrt(pow(0.01,2) + pow(pt,2)*pow(0.0e-4,2))
+        smear = np.sqrt(pow(0.01,2) + pow(pt,2)*pow(2.0e-4,2))
     elif abs(eta) > 0.5 and abs(eta) <= 1.5 and pt > 0.1 :
         smear = np.sqrt(pow(0.02,2) + pow(pt,2)*pow(3e-4,2))
     elif abs(eta) > 1.5 and abs(eta) <= 2.5 and pt > 0.1 :
@@ -244,10 +244,10 @@ pion_axes.set_xlim(0.1,100)
 pion_axes.set_yscale("log")
 pion_axes.set_ylim(0.005,1)
 
-ax.set_xlabel(r'$p_T$', fontsize=25, labelpad=25)
+ax.set_xlabel(r'$p_T$ [GeV]', fontsize=25, labelpad=25)
 ax.set_ylabel(r'$\sigma(p_T)/p_T$', fontsize=25, labelpad=25)
 
 
 
-fig1.savefig('trackerSmearing.png')
+fig2.savefig('trackerSmearing.png')
 
