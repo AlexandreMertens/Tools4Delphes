@@ -56,11 +56,11 @@ vpionEff = vectorize(pionEff)
 def elecSmearing(pt,eta):
     
     if (abs(eta) <= 0.5) and (pt > 0.1) :
-        smear = np.sqrt(pow(0.06,2) + pow(pt,2)*pow(1.3e-3,2))
+        smear = np.sqrt(pow(0.03,2) + pow(pt,2)*pow(1.3e-3,2))
     elif abs(eta) > 0.5 and abs(eta) <= 1.5 and pt > 0.1 :
-        smear = np.sqrt(pow(0.10,2) + pow(pt,2)*pow(1.7e-3,2)) 
+        smear = np.sqrt(pow(0.05,2) + pow(pt,2)*pow(1.7e-3,2)) 
     elif abs(eta) > 1.5 and abs(eta) <= 2.5 and pt > 0.1 :
-        smear =  np.sqrt(pow(0.25,2) + pow(pt,2)*pow(3.1e-3,2))
+        smear =  np.sqrt(pow(0.15,2) + pow(pt,2)*pow(3.1e-3,2))
     else :
         smear = 0   
     return smear
@@ -70,11 +70,11 @@ velectronSmearing=vectorize(elecSmearing)
 def pionSmearing(pt,eta):
 
     if (abs(eta) <= 0.5) and (pt > 0.1) :
-        smear = np.sqrt(pow(0.06,2) + pow(pt,2)*pow(1.3e-3,2))
+        smear = np.sqrt(pow(0.01,2) + pow(pt,2)*pow(1.5e-4,2))
     elif abs(eta) > 0.5 and abs(eta) <= 1.5 and pt > 0.1 :
-        smear = np.sqrt(pow(0.10,2) + pow(pt,2)*pow(1.7e-3,2))
+        smear = np.sqrt(pow(0.015,2) + pow(pt,2)*pow(2.5e-4,2))
     elif abs(eta) > 1.5 and abs(eta) <= 2.5 and pt > 0.1 :
-        smear =  np.sqrt(pow(0.25,2) + pow(pt,2)*pow(3.1e-3,2))
+        smear =  np.sqrt(pow(0.025,2) + pow(pt,2)*pow(5.5e-4,2))
     else :
         smear = 0
     return smear
@@ -84,11 +84,11 @@ vpionSmearing=vectorize(pionSmearing)
 def muonSmearing(pt,eta):
 
     if (abs(eta) <= 0.5) and (pt > 0.1) :
-        smear = np.sqrt(pow(0.01,2) + pow(pt,2)*pow(2.0e-4,2))
+        smear = np.sqrt(pow(0.01,2) + pow(pt,2)*pow(1.0e-4,2))
     elif abs(eta) > 0.5 and abs(eta) <= 1.5 and pt > 0.1 :
-        smear = np.sqrt(pow(0.02,2) + pow(pt,2)*pow(3e-4,2))
+        smear = np.sqrt(pow(0.015,2) + pow(pt,2)*pow(1.5e-4,2))
     elif abs(eta) > 1.5 and abs(eta) <= 2.5 and pt > 0.1 :
-        smear =  np.sqrt(pow(0.05,2) + pow(pt,2)*pow(6.0e-4,2))
+        smear =  np.sqrt(pow(0.025,2) + pow(pt,2)*pow(3.5e-4,2))
     else :
         smear = 0
     return smear
@@ -138,7 +138,7 @@ eta_parts = [eta_ec1, eta_barrel, eta_ec2]
 
 ## pt definitions
 
-pt_range = np.linspace(0.11,100.11,num=20)
+pt_range = np.linspace(0.11,1000.11,num=100)
 
 pt_parts = [pt_range]
 
@@ -213,21 +213,21 @@ smearPlotter(pt_parts, [0.5,1.5,2.5], velectronSmearing, elec_axes, ['-','--',':
 leg = elec_axes.legend(loc=4)
 leg.get_frame().set_linewidth(0.0)
 elec_axes.tick_params(labelsize=20)
-elec_axes.text(5, 0.01 , r'electrons', fontsize=20)
+elec_axes.text(50, 0.6 , r'electrons', fontsize=20)
 #pion_axes.set_xscale("log")
-elec_axes.set_xlim(0.1,100)
+elec_axes.set_xlim(0.1,1000)
 elec_axes.set_yscale("log")
-elec_axes.set_ylim(0.005,1)
+elec_axes.set_ylim(0.01,2)
 
 # muon plot
 muon_axes = fig2.add_subplot(312)
 smearPlotter(pt_parts, [0.5,1.5,2.5], vmuonSmearing, muon_axes, ['-','--',':'], [r'$|\eta| \leq 0.5 $', r'$ 0.5 \leq |\eta| < 1.5$', r'$ 1.5 \leq |\eta| < 2.5 $'])
-leg = muon_axes.legend(loc=1)
+leg = muon_axes.legend(loc=4)
 leg.get_frame().set_linewidth(0.0)
 muon_axes.tick_params(labelsize=20)
-muon_axes.text(5, 0.3 , r'muons', fontsize=20)
+muon_axes.text(50, 0.3 , r'muons', fontsize=20)
 #pion_axes.set_xscale("log")
-muon_axes.set_xlim(0.1,100)
+muon_axes.set_xlim(0.1,1000)
 muon_axes.set_yscale("log")
 muon_axes.set_ylim(0.005,1)
 
@@ -237,10 +237,10 @@ smearPlotter(pt_parts, [0.5,1.5,2.5], vpionSmearing, pion_axes, ['-','--',':'], 
 leg = pion_axes.legend(loc=4)
 leg.get_frame().set_linewidth(0.0)
 pion_axes.tick_params(labelsize=20)
-pion_axes.text(5, 0.01 , r'charged hadrons', fontsize=20)
+pion_axes.text(50, 0.3 , r'charged hadrons', fontsize=20)
 
 #pion_axes.set_xscale("log")
-pion_axes.set_xlim(0.1,100)
+pion_axes.set_xlim(0.1,1000)
 pion_axes.set_yscale("log")
 pion_axes.set_ylim(0.005,1)
 
