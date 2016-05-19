@@ -1,0 +1,177 @@
+\documentclass[a4paper,10pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{xcolor}
+
+
+
+\usepackage{geometry}
+ \geometry{
+ a4paper,
+ total={210mm,297mm},
+ left=20mm,
+ right=20mm,
+ top=20mm,
+ bottom=20mm,
+ }
+
+
+
+%opening
+\title{Delphes Tutorial}
+\author{P. Demin, A. Mertens, M. Selvaggi}
+
+\lstset{%
+%  language=C++,
+  numbers=none,
+  tabsize=3,
+  basicstyle=\small\ttfamily,
+  framerule=0pt,
+%  keywordstyle=\color{blue}\ttfamily,
+%  stringstyle=\color{red}\ttfamily,
+  commentstyle=\color{green}\ttfamily,
+%  morecomment=[l][\color{magenta}]{\#},
+  backgroundcolor=\color{gray!25},
+  breaklines=true,
+  xleftmargin=15pt,
+  columns=fullflexible
+}
+
+\begin{document}
+
+\maketitle
+
+
+\section{Introduction}
+
+This tutorial has been redacted with the aim to make the reader familiar with the Delphes program and how to use it. 
+The four first exercises focus on the simpler aspects such as installing, running, and analysing the output of Delphes. 
+The physical goal will be measurement of the mass of the $b\bar{b}$-system with an energy in the center of mass of *** TeV.
+
+\subsection{Example 1: Quick start with Delphes}
+
+Using Delphes require recent version of GCC (???) and ROOT (above 5.30). If If you are working on LXPLUS, you just need to connect to LXPLUS, and setup GCC and ROOT, for bash:
+\begin{lstlisting} 
+ssh lxplus.cern.ch
+source /afs/cern.ch/sw/lcg/external/gcc/4.7/x86_64-slc6/setup.sh
+source /afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.18/x86_64-slc6-gcc47-opt/root/bin/thisroot.sh
+\end{lstlisting}
+or the following lines when using [t]csh.
+\begin{lstlisting}
+source /afs/cern.ch/sw/lcg/external/gcc/4.7/x86_64-slc6/setup.csh
+source /afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.18/x86_64-slc6-gcc47-opt/root/bin/thisroot.csh
+\end{lstlisting}
+Once your environment is setted, you can download a version of Delphes, decompress the file, and compile the code:
+\begin{lstlisting}
+wget http://cp3.irmp.ucl.ac.be/downloads/Delphes-3.1.2.tar.gz
+tar -zxf Delphes-3.1.2.tar.gz
+cd Delphes-3.1.2
+make -j 4
+\end{lstlisting}
+
+Finally, we can run Delphes, with the following synthax:
+\begin{lstlisting}
+./DelphesSTDHEP card.tcl output.root [input1.root ... inputn.root]
+\end{lstlisting}
+
+For the purpose of this exercice, let's download a $ee \rightarrow Z h \rightarrow \mu^+ \mu^- b \bar{b}$ stdhep file generated with MadGraph5 and Pythia. We can then simulate the detector reconstruction:
+\begin{lstlisting}
+wget http://cp3.irmp.ucl.ac.be/downloads/delphes_tuto/ee_zh_mmbb.hep.gz
+gunzip ee_zh_mmbb.hep.gz
+./DelphesSTDHEP examples/delphes_card_FCC_basic.tcl step_1.root ee_zh_mmbb.hep
+\end{lstlisting}
+
+\subsection{Example 2: Simple analysis using TTree::Draw}
+
+Now we can start ROOT and look at the data stored on the tree
+
+Start ROOT and load shared library:
+\begin{lstlisting}
+root -l
+gSystem->Load("libDelphes");
+\end{lstlisting}
+
+Open ROOT tree file and do some basic analysis using Draw or TBrowser:
+\begin{lstlisting}
+TFile::Open("step_1.root");
+Delphes->Draw("Muon.PT", "Muon.PT > 20");
+Delphes->Draw("Jet.PT", "Jet.BTag > 0");
+TBrowser browser;
+\end{lstlisting}
+
+Note 1: Delphes - tree name, it can be learnt e.g. from TBrowser
+
+Note 2: Muon - branch name; PT - variable (leaf) of this branch
+
+Complete description of all branches can be found in
+\begin{lstlisting}
+Delphes/doc/RootTreeDescription.html
+\end{lstlisting}
+
+This file is also available via web:
+
+  http://cp3.irmp.ucl.ac.be/downloads/RootTreeDescription.html
+
+
+\subsection{Example 3: Macro-based analysis}
+
+Analysis macro consists of histogram booking, event loop (histogram filling),
+histogram display
+
+Delphes/examples contains macros Example1.C, Example2.C and Example3.C
+
+Here are commands to run a macro reconstructing the Higgs invariant mass:
+\begin{lstlisting}
+cp /afs/cern.ch/user/s/selvaggi/public/delphes_tuto/InvariantMass.C .
+root -l -b -q InvariantMass.C'("step_1.root", "step_1_plots.root")'
+\end{lstlisting}
+
+The step\_1\_plots.root file contains 2 histograms of uncorrected and
+corrected b-bbar invariant mass
+
+
+\subsection{Example 4: Modifying configuration file}
+
+Change the calorimeter granularity in the configuration file:
+\begin{lstlisting}
+edit examples/delphes_card_FCC_basic.tcl
+\end{lstlisting}
+replace ECAL and HCAL phi and eta bins with:
+
+\begin{lstlisting}
+# 1 degree towers
+set PhiBins {}
+for {set i -180} {$i <= 180} {incr i} {
+  add PhiBins [expr {$i * $pi/180.0}]
+}
+
+# 0.01 unit in eta up to eta = 6
+for {set i -600} {$i <= 600} {incr i} {
+  set eta [expr {$i * 0.01}]
+  add EtaPhiBins $eta $PhiBins
+}
+\end{lstlisting}
+
+rerun Delphes:
+\begin{lstlisting}
+./DelphesSTDHEP examples/delphes_card_FCC_basic.tcl step_2.root /afs/cern.ch/user/s/selvaggi/public/delphes_tuto/ee_zh_mmbb.hep
+\end{lstlisting}
+redo the invariant mass histograms:
+\begin{lstlisting}
+root -l -b -q InvariantMass.C'("step_2.root", "step_2_plots.root")'
+\end{lstlisting}
+compare histograms:
+\begin{lstlisting}
+root -l step_1_plots.root step_2_plots.root
+  
+((TH1F *)_file0->Get("mbb_corr"))->SetLineColor(kBlue);
+((TH1F *)_file1->Get("mbb_corr"))->SetLineColor(kRed);
+  
+_file0->Get("mbb_corr")->Draw();
+_file1->Get("mbb_corr")->Draw("SAME");
+\end{lstlisting}
+You could also try to change the energy resolution of ECAL and/or HCAL.
+
+
+\end{document}
